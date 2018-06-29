@@ -7,7 +7,7 @@ began in 1845 (the twenty-second anniversary of the Mexican Revolution), and
 is the 1st example of a national independence holiday becoming popular in the
 Western Hemisphere. (The Fourth of July didn't see regular celebration in the
 US until 15-20 years later.) It is celebrated by 77.9% of the population--
-trending toward 80.                                                                
+trending toward 80.
 '''
 
 class TestCase(unittest.TestCase):
@@ -30,6 +30,39 @@ class TestCase(unittest.TestCase):
     def test_no_integers(self):
         self.assert_extract("no integers", library.integers)
 
+    #Fourth unit test; prove that if we can extract date from string
+    def test_dates(self):
+        self.assert_extract('I was born on 2015-07-25 ', library.dates_iso8601, '2015-07-25')
+
+    #Fifth unit test; prove that if we give wrong date, it returns no results
+    def test_wrong_dates(self):
+        self.assert_extract('i was born on 2015-14-32 ', library.dates_iso8601)
+
+    # Sixth unit test; prove that we can extract date from string
+    def test_dates_other_format(self):
+        self.assert_extract("I was born on 25 Jan 2017.", library.dates_fmt2, '25 Jan 2017')
+
+    #Assignment test
+    def test_dates_timestamp_with_T(self):
+        self.assert_extract("date on which avengers was formed 2018-06-22T18:22:19.123.", library.dates_iso8601,'2018-06-22T18:22:19.123')
+    def test_dates_timestamp_MDT(self):
+        self.assert_extract("date on which avengers was formed 2018-06-22 18:22:19.123 MDT", library.dates_iso8601, '2018-06-22 18:22:19.123 MDT')
+    def test_dates_timestamp_Z(self):
+        self.assert_extract("date on which avengers was formed 18:22:19.123 Z", library.dates_iso8601, '2018-06-22 18:22:19.123 Z')
+    def test_dates_timestamp_0800_negative_offset(self):
+        self.assert_extract("date on which avengers was formed 2018-06-22 18:22:19.123 -0800", library.dates_iso8601, '2018-06-22 18:22:19.123 -0800')
+    def test_dates_timestamp_0800_positive_offset(self):
+        self.assert_extract("date on which avengers was formed 2018-06-22 18:22:19.123 +0800", library.dates_iso8601, '2018-06-22 18:22:19.123 +0800')
+    def test_dates__wrong_format(self):
+        self.assert_extract("invalid date on which avengers was formed 2018:23:2017 18:22:19.123", library.dates_iso8601)
+    def test_dates_blank(self):
+        self.assert_extract("", library.dates_iso8601)
+    def test_no_dates(self):
+        self.assert_extract("just like that :)", library.dates_iso8601)
+    def test_dates_other_format(self):
+        self.assert_extract("date on which avengers was formed 25 Jan, 2017.", library.dates_other, '25 Jan, 2017')
+    def test_integers_other_format(self):
+        self.assert_extract("123,456,789", library.integers, '123', '456', '789')
 
 if __name__ == '__main__':
     unittest.main()
